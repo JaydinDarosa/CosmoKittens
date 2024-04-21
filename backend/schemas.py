@@ -49,10 +49,14 @@ class Tamagotchi(TamagotchiBase):
     steps: int
     water: int
     food: int
+    battery: int
+    mood: int
+    health: int
 
 
 class DataDiff(BaseModel):
     steps: int
+    battery: int
 
 class CreatedTamagotchi(TamagotchiBase):
     owner: int

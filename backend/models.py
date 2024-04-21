@@ -8,6 +8,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True)
     hashed_password = Column(String)
+    goalStepCount = Column(Integer, default=6000)
 
 
 class Tamagotchi(Base):
@@ -21,6 +22,9 @@ class Tamagotchi(Base):
     steps = Column(Integer, default=0)
     water = Column(Integer, default=100)
     food = Column(Integer, default=100)
+    battery = Column(Integer, default=100)
+    mood = Column(Integer, default=100)
+    health = Column(Integer, default=100)
 
 
 

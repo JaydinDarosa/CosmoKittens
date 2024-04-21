@@ -65,6 +65,16 @@ def sync_tamagotchi(db: Session, machine_id: str, data: schemas.DataDiff):
     if tamagotchi is None:
         return None
     tamagotchi.steps += data.steps
+    foodScore = (tamagotchi.food / 100) * 4 # Scale food score of 0 - 4
+    waterScore = (tamagotchi.water / 100) * 4 # Scale water score of 0 - 4
+    user = db.query(models.User).filter(models.User.id == tamagotchi.owner).first()
+    stepScore = (tamagotchi.steps / user.goalStepCount) * 4 # Scale step score of 0 - 4
+    finalScore = (foodScore + waterScore + stepScore) / 3
+    happiness = round(finalScore)
+    tamagotchi.battery = data.battery
+    tamagotchi.mood = happiness
+
+
     db.commit()
     db.refresh(tamagotchi)
     return tamagotchi
