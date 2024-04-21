@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7f6e0b2-5725-441f-9ba5-0cd46458d852" name="Changes" comment="Finishing Touches" />
+    <list default="true" id="c7f6e0b2-5725-441f-9ba5-0cd46458d852" name="Changes" comment="Built">
+      <change afterPath="$PROJECT_DIR$/public/big_cats/sharkCat.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/big_cats/tabbyCat.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/index.astro" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -95,7 +99,7 @@
       <workItem from="1713684709531" duration="634000" />
       <workItem from="1713685492608" duration="35000" />
       <workItem from="1713685852313" duration="61000" />
-      <workItem from="1713685976229" duration="22384000" />
+      <workItem from="1713685976229" duration="23174000" />
     </task>
     <task id="LOCAL-00001" summary="Finishing Touches">
       <option name="closed" value="true" />
@@ -113,7 +117,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713712468132</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Built">
+      <option name="closed" value="true" />
+      <created>1713712523792</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1713712523792</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -121,6 +133,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Finishing Touches" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finishing Touches" />
+    <MESSAGE value="Built" />
+    <option name="LAST_COMMIT_MESSAGE" value="Built" />
   </component>
 </project>
