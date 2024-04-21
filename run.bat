@@ -13,6 +13,6 @@ docker run --name tamagotchihealth ^
             -v .\db:/var/db:Z ^
             -v .\frontend\dist:/home/user/frontend/dist:Z ^
             --rm ^
-            -p 127.0.0.1:8080:80 ^
+            -p 127.0.0.1:24242:80 ^
             -e HOST=%1 ^
             tamagotchihealth
