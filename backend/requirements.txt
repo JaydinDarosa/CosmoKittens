@@ -1,0 +1,9 @@
+fastapi[all]
+sqlalchemy
+pydantic
+bcrypt
+pyjwt
+opencv-python
+requests
+numpy
+pillow

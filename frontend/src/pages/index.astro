@@ -1,0 +1,137 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import icon from '../assets/Vector.svg';
+import Star from 'astro-heroicons/outline/Star.astro';
+import Sparkles from 'astro-heroicons/outline/Sparkles.astro';
+import RocketLaunch from 'astro-heroicons/outline/RocketLaunch.astro';
+import Gift from 'astro-heroicons/outline/Gift.astro';
+
+---
+
+<Layout title="Cosmic Kittens!">
+		<main class="flex-1 bg-gray-100 px-16">
+			<section class="container mx-auto py-12 md:py-24 lg:py-32">
+				<div class="grid md:grid-cols-2 gap-8 items-center">
+					<div class="space-y-4">
+						<h1 class="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">Adopt Your Cosmic Kitten</h1>
+						<p class="text-gray-500 text-lg">
+							Discover the joy of raising your own virtual pet in the cosmos. Feed, play, and care for your Cosmic
+							Kitten as you both get healthier and happier!
+						</p>
+						<div class="flex gap-4">
+							<button>Adopt Now</button>
+							<button>Learn More</button>
+						</div>
+					</div>
+					<div class="relative">
+						<img
+							alt="Cosmic Kitten"
+							class="cat_img mx-auto aspect-square rounded-full object-cover"
+							height="480"
+							src="/placeholder.svg"
+							width="480"
+						/>
+					</div>
+				</div>
+			</section>
+			<section class="bg-gray-100 py-12 md:py-24 lg:py-32">
+				<div class="container mx-auto px-4 md:px-6">
+					<div class="grid md:grid-cols-2 gap-8 items-center">
+						<div class="order-2 md:order-1">
+							<img
+								alt="Cosmic Kitten Features"
+								class="cat_img mx-auto aspect-square rounded-full object-cover"
+								height="480"
+								src="/placeholder.svg"
+								width="480"
+							/>
+						</div>
+						<div class="order-1 md:order-2 space-y-4">
+							<h2 class="text-3xl font-bold tracking-tight md:text-4xl">Cosmo Kitten Features</h2>
+							<p class="text-gray-500 text-lg">
+								Discover all the exciting features that come with your Cosmic Kitten.
+							</p>
+							<ul class="grid gap-4">
+								<li class="flex items-start gap-4">
+									<Sparkles class="h-6 w-6 text-[#8b5cf6]" />
+									<div>
+										<h3 class="font-semibold">Health Partner</h3>
+										<p class="text-gray-500">
+											You and your Cosmic Kitten will become healthy, as both of you take walks and eat.
+										</p>
+									</div>
+								</li>
+								<li class="flex items-start gap-4">
+									<RocketLaunch class="h-6 w-6 text-[#ec4899]" />
+									<div>
+										<h3 class="font-semibold">Cosmic Adventures</h3>
+										<p class="text-gray-500">
+											Your kitten relaxes in a cosmic space pod, traveling through the galaxy above.
+										</p>
+									</div>
+								</li>
+								<li class="flex items-start gap-4">
+									<Gift class="h-6 w-6 text-[#8b5cf6]" />
+									<div>
+										<h3 class="font-semibold">Cosmic Accessories</h3>
+										<p class="text-gray-500">
+											Dress up your Cosmic Kitten with a variety of cosmic accessories.
+										</p>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="container mx-auto py-12 md:py-24 lg:py-32">
+				<div class="grid md:grid-cols-2 gap-8 items-center">
+					<div class="space-y-4">
+						<h2 class="text-3xl font-bold tracking-tight md:text-4xl">Start Your Cosmic Journey</h2>
+						<p class="text-gray-500 text-lg">
+							Adopt your Cosmic Kitten today and begin an exciting adventure through the cosmos.
+						</p>
+						<div class="flex gap-4">
+							<button>Adopt Now</button>
+							<button>Learn More</button>
+						</div>
+					</div>
+					<div class="relative">
+						<img
+							alt="Cosmic Kitten Adoption"
+							class="cat_img mx-auto aspect-square rounded-full object-cover"
+							height="480"
+							src="/placeholder.svg"
+							width="480"
+						/>
+					</div>
+				</div>
+			</section>
+		</main>
+</Layout>
+<style>
+	.cat_img {
+		image-rendering: pixelated;
+		image-rendering: -moz-crisp-edges;
+		image-rendering: crisp-edges;
+	}
+</style>
+<script>
+	var images = [
+		"mermaid_cat.png",
+		"mermaid_cat_2.jpg",
+		"normal_cat.jpg",
+		"scared_cat.jpg",
+		"striped_cat.png",
+		"another_cat.jpg"
+	]
+	// Get all cat_img elements
+	var catImages = document.querySelectorAll('.cat_img');
+	catImages.forEach((catImage: HTMLImageElement) => {
+		catImage.src = "/big_cats/" + images[Math.floor(Math.random() * images.length)];
+		images = images.filter((image) => image !== catImage.src.split("/").pop());
+	});
+
+
+</script>

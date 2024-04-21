@@ -1,0 +1,12 @@
+http://{$HOST} {
+	encode gzip
+	handle_path /api/* {
+		reverse_proxy :1111
+	}
+	handle {
+		root * /home/user/frontend/dist
+
+		try_files {path} index.html
+		file_server
+	}
+}

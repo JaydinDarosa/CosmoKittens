@@ -1,0 +1,69 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+---
+<Layout title="Cosmic Kittens Login / Registration">
+    <div class="flex flex-col h-screen">
+        <div class="fancy_pattern flex items-center justify-center h-full flex-grow">
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h1 class="text-2xl font-bold mb-4">Login / Register</h1>
+                <div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="username" name="username" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="password" name="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex justify-between">
+                            <button id="login_buttton" class="w-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</button>
+                            <button id="register_button" class="w-1/2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Register</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+<script>
+    document.getElementById('login_buttton').addEventListener('click', function(e) {
+        // Send to /api/login end point with user
+        fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            })
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        }).then(data => {
+            console.log(data);
+            // Redirect to home page
+            window.location.href = '/';
+        }).catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
+
+    });
+
+    document.getElementById('register_button').addEventListener('click', function(e) {
+    });
+</script>
+
+
+<style>
+    .fancy_pattern {
+        background-color: #fbfcef;
+        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ededed' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+    }
+</style>
+
