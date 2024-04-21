@@ -23,7 +23,7 @@ class Tamagotchi(Base):
     water = Column(Integer, default=100)
     food = Column(Integer, default=100)
     battery = Column(Integer, default=100)
-    mood = Column(Integer, default=100)
+    mood = Column(Integer, default=3)
     health = Column(Integer, default=100)
 
 
