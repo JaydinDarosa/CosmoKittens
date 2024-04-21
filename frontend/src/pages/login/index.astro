@@ -10,7 +10,7 @@ import Layout from '../../layouts/Layout.astro';
                 <div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Username</label>
-                        <input type="text" id="username" name="username" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                        <input type="text" id="username_form" name="username" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
 
                     </div>
                     <div class="mb-4">
@@ -30,15 +30,16 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 <script>
     document.getElementById('login_buttton').addEventListener('click', function(e) {
-        // Send to /api/login end point with user
+        const username = document.getElementById('username_form') as HTMLInputElement;
+        const password = document.getElementById('password') as HTMLInputElement;
         fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value
+                username: username.value,
+                password: password.value
             })
         }).then(response => {
             if (response.ok) {
@@ -56,6 +57,29 @@ import Layout from '../../layouts/Layout.astro';
     });
 
     document.getElementById('register_button').addEventListener('click', function(e) {
+        const username = document.getElementById('username_form') as HTMLInputElement;
+        const password = document.getElementById('password') as HTMLInputElement;
+        fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username.value,
+                password: password.value
+            })
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        }).then(data => {
+            console.log(data);
+            // Redirect to home page
+            window.location.href = '/';
+        }).catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
     });
 </script>
 

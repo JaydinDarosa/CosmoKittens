@@ -32,21 +32,20 @@ class Appearance(BaseModel):
     body_type: int  # 1 - 8
     hat: int
 
-    @staticmethod
-    def random():
-        import random
-        return Appearance(
-            primary_color=random.randint(1, 8),
-            secondary_color=random.randint(1, 8),
-            body_type=random.randint(1, 8),
-            hat=random.randint(0, 2)
-        )
+def getRandomAppearance():
+    import random
+    return Appearance(
+        primary_color=random.randint(1, 8),
+        secondary_color=random.randint(1, 8),
+        body_type=random.randint(1, 8),
+        hat=random.randint(0, 2)
+    )
 
 
 class Tamagotchi(TamagotchiBase):
     owner: int
     name: str
-    appearance: Appearance
+    appearance: str
     steps: int
     water: int
     food: int
@@ -54,12 +53,12 @@ class Tamagotchi(TamagotchiBase):
 
 class DataDiff(BaseModel):
     steps: int
-    water: int
-    food: int
-
 
 class CreatedTamagotchi(TamagotchiBase):
     owner: int
     appearance: Appearance
     plain_token: str
     id: int
+
+
+

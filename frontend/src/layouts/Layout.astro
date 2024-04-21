@@ -21,23 +21,61 @@ import icon from '../assets/Vector.svg';
 	<body>
 	<header class="bg-gradient-to-r from-purple-400 to-fuchsia-500 py-4 px-6 shadow-md">
 		<div class="container mx-auto flex items-center justify-between">
-			<a class="flex items-center gap-2 text-white font-bold text-lg" href="#">
+			<a class="flex items-center gap-2 text-white font-bold text-lg" href="/">
 				<img src={icon.src} alt="Cosmic Kittens" class="w-16 h-16" />
 				Cosmic Kittens
 			</a>
 			<nav class="flex items-center gap-4 text-white">
-				<a class="hover:underline" href="/login">
+				<a class="hover:underline" href="/login" id="login">
 					Create Account or Sign In
 				</a>
-				<a class="hover:underline" href="/play">
+				<a class="hover:underline hidden" href="/play" id="play">
 					Play
 				</a>
+				<a class="hover:underline hidden" href="#" id="logout">
+					Logout
+				</a>
+
+				<span>
+					Logged in as <span id="username"></span>
+				</span>
 			</nav>
 		</div>
 	</header>
 	<slot />
 	</body>
 </html>
+<script>
+	// Hit the /api/self endpoint to check if the user is logged in
+	fetch('/api/self')
+		.then((res) => {
+			if (res.ok) {
+				document.getElementById('login').classList.add('hidden');
+				document.getElementById('play').classList.remove('hidden');
+				document.getElementById('logout').classList.remove('hidden');
+				let response = res.json().then((data) => {
+					document.getElementById('username').innerText = data['username'];
+				});
+			}
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+	var logout = document.getElementById('logout');
+	logout.addEventListener('click', () => {
+		fetch('/api/logout', {
+			method: 'POST',
+		})
+			.then((res) => {
+				if (res.ok) {
+					location.reload();
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	});
+</script>
 <style is:global>
 
 </style>

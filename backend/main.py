@@ -7,12 +7,14 @@ from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
 
 def authentication(auth: Annotated[str | None, Cookie()] = None, db: Session = Depends(get_db)):
     if auth:
@@ -21,11 +23,14 @@ def authentication(auth: Annotated[str | None, Cookie()] = None, db: Session = D
             return crud.get_user(db, data.get('id'))
     raise HTTPException(status_code=400, detail="Failed To authenticate")
 
+
 app = FastAPI()
+
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
 
 @app.post("/login", response_model=schemas.User)
 def login(logging_in_user: schemas.UserLogin, response: Response, db: Session = Depends(get_db)):
@@ -35,9 +40,11 @@ def login(logging_in_user: schemas.UserLogin, response: Response, db: Session = 
         return user
     raise HTTPException(status_code=400, detail="Failed To login")
 
+
 @app.post('/logout')
 def logout(response: Response) -> None:
     response.delete_cookie("auth")
+
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, response: Response, db: Session = Depends(get_db)):
@@ -51,14 +58,17 @@ def create_user(user: schemas.UserCreate, response: Response, db: Session = Depe
     response.set_cookie("auth", utils.sign({"id": newUser.id}))
     return newUser
 
+
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return sorted(users, key=lambda u: u.id)
 
+
 @app.get("/self", response_model=schemas.User)
-def get_self(user = Depends(authentication)):
+def get_self(user=Depends(authentication)):
     return user
+
 
 @app.get("/users/{user_id}", response_model=schemas.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
@@ -67,6 +77,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
+
 @app.get("/tamagotchis/{tamagotchi_id}", response_model=schemas.Tamagotchi)
 def read_tamagotchi(tamagotchi_id: int, db: Session = Depends(get_db)):
     tamagotchi = crud.get_tamagotchi(db, tamagotchi_id=tamagotchi_id)
@@ -74,29 +85,34 @@ def read_tamagotchi(tamagotchi_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Tamagotchi not found")
     return tamagotchi
 
+
 @app.post("/tamagotchis/", response_model=schemas.CreatedTamagotchi)
-def create_tamagotchi(hardware_id: str, db: Session = Depends(get_db), user = Depends(authentication)):
+def create_tamagotchi(hardware_id: str, db: Session = Depends(get_db), user=Depends(authentication)):
     return crud.create_tamagotchi(db=db, owner=user, hardware_id=hardware_id)
 
 
 @app.get("/self/tamagotchis", response_model=list[schemas.Tamagotchi])
-def read_tamagotchis_owned(db: Session = Depends(get_db), user = Depends(authentication)):
+def read_tamagotchis_owned(db: Session = Depends(get_db), user=Depends(authentication)):
     tamagotchis = crud.get_tamagotchis_owned(db, user=user)
     if tamagotchis is None:
         raise HTTPException(status_code=404, detail="Tamagotchis not found")
     return tamagotchis
 
+
 @app.post("/sync/", response_model=schemas.Tamagotchi)
-def sync_to_tamagotchi(machine_id: str, db: Session = Depends(get_db)):
-    tamagotchi = crud.sync_tamagotchi(db, machine_id)
+def sync_to_tamagotchi(machine_id: str, data: schemas.DataDiff,  db: Session = Depends(get_db)):
+    tamagotchi = crud.sync_tamagotchi(db, machine_id, data)
     if tamagotchi is None:
         raise HTTPException(status_code=404, detail="Tamagotchi not found")
     return tamagotchi
 
-@app.post("/sync/data", response_model=schemas.Tamagotchi)
-def sync_data_to_tamagotchi(machine_id: str, data: schemas.DataDiff, db: Session = Depends(get_db)):
-    tamagotchi = crud.sync_data(db, machine_id, data)
-    if tamagotchi is None:
-        raise HTTPException(status_code=404, detail="Tamagotchi not found")
-    return tamagotchi
-
+@app.get("/sprite/{hardware_id}",
+         responses={
+             200: {
+                 "content": {"image/png": {}}
+             }
+         },
+         response_class=Response)
+def get_sprite(hardware_id: str, db: Session = Depends(get_db)):
+    tamagotchi = crud.get_tamagotchi_sprite(db, hardware_id)
+    return Response(content=tamagotchi, media_type="image/png")

@@ -1,5 +1,6 @@
 import random
 import string
+from io import BytesIO
 
 from sqlalchemy.orm import Session
 from PIL import Image
@@ -35,12 +36,13 @@ names = ["Quasar", "Asteroid", "Nebula", "Galaxy", "Star", "Meteor", "Comet", "N
 
 
 def create_tamagotchi(db: Session, owner: models.User, hardware_id: str):
-    appearance = schemas.Appearance.random()
+    appearance = schemas.getRandomAppearance()
+    appearanceStringJson = appearance.json()
     tamagotchi_id = db.query(models.Tamagotchi).count() + 1
     name = names[hash(tamagotchi_id) % len(names)]
     token = hardware_id
-    hashed_token = utils.get_hashed_password(token)
-    db_tamagotchi = models.Tamagotchi(name=name, appearance=appearance, owner=owner.id, hardware_token=hashed_token)
+    hashed_token = token
+    db_tamagotchi = models.Tamagotchi(name=name, appearance=appearanceStringJson, owner=owner.id, hardware_token=hashed_token)
     db.add(db_tamagotchi)
     db.commit()
     db.refresh(db_tamagotchi)
@@ -58,27 +60,34 @@ def get_tamagotchis_owned(db: Session, user: models.User):
     return db.query(models.Tamagotchi).filter(models.Tamagotchi.owner == user.id).all()
 
 
-def sync_tamagotchi(db: Session, machine_id: str):
-    hashed = utils.get_hashed_password(machine_id)
-    return db.query(models.Tamagotchi).filter(models.Tamagotchi.hardware_token == hashed).first()
-
-
-def sync_data(db: Session, machine_id: str, data: schemas.DataDiff):
-    tamagotchi = sync_tamagotchi(db, machine_id)
+def sync_tamagotchi(db: Session, machine_id: str, data: schemas.DataDiff):
+    tamagotchi = db.query(models.Tamagotchi).filter(models.Tamagotchi.hardware_token == machine_id).first()
     if tamagotchi is None:
         return None
     tamagotchi.steps += data.steps
-    tamagotchi.water = max(0, min(100, tamagotchi.water + data.water))
-    tamagotchi.food = max(0, min(100, tamagotchi.food + data.food))
     db.commit()
     db.refresh(tamagotchi)
     return tamagotchi
 
-# def get_tamagotchis(db: Session, machine_id: str):
-#     hashed = utils.get_hashed_password(machine_id)
-#     tamagachi = db.query(schemas.Tamagotchi).filter(models.Tamagotchi.hardware_token == hashed).first()
-#     appearance = tamagachi.appearance
-#     base_texture = Image.open("assets/p_" + str(appearance.primary_color) + "_" + str(appearance.body_type) + ".png")
+
+def get_tamagotchi_sprite(db: Session, machine_id: str):
+    tamagachi = db.query(models.Tamagotchi).filter(models.Tamagotchi.hardware_token == machine_id).first()
+    if tamagachi is None:
+        return None
+    appearanceStringJson = tamagachi.appearance
+    appearance = schemas.Appearance.parse_raw(appearanceStringJson)
+    base_texture = Image.open("assets/pp_" + str(appearance.primary_color) + "_" + str(appearance.body_type) + ".png").convert("RGBA")
+    secondary_texture = Image.open("assets/sp_" + str(appearance.secondary_color) + "_" + str(appearance.body_type) + ".png").convert("RGBA")
+    tamagotchi = Image.new("RGBA", base_texture.size)
+    tamagotchi.paste(base_texture, [0, 0], base_texture)
+    tamagotchi.paste(secondary_texture, [0, 0], secondary_texture)
+    membuf = BytesIO()
+    tamagotchi.save(membuf, format="PNG")
+    return membuf.getvalue()
+
+
+
+
 
 
 

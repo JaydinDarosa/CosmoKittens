@@ -6,7 +6,7 @@ http://{$HOST} {
 	handle {
 		root * /home/user/frontend/dist
 
-		try_files {path} index.html
+		# try_files {path} index.html
 		file_server
 	}
 }
