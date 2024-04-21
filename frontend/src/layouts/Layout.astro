@@ -32,12 +32,16 @@ import icon from '../assets/Vector.svg';
 				<a class="hover:underline hidden" href="/play" id="play">
 					Play
 				</a>
+				<a class="hover:underline hidden" href="/add" id="pets">
+					Adopt Pet
+				</a>
 				<a class="hover:underline hidden" href="#" id="logout">
 					Logout
 				</a>
 
+
 				<span>
-					Logged in as <span id="username"></span>
+					Logged in as <span id="username" class="font-bold"></span>
 				</span>
 			</nav>
 		</div>
@@ -52,6 +56,7 @@ import icon from '../assets/Vector.svg';
 			if (res.ok) {
 				document.getElementById('login').classList.add('hidden');
 				document.getElementById('play').classList.remove('hidden');
+				document.getElementById('pets').classList.remove('hidden');
 				document.getElementById('logout').classList.remove('hidden');
 				let response = res.json().then((data) => {
 					document.getElementById('username').innerText = data['username'];

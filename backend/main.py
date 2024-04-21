@@ -116,3 +116,36 @@ def sync_to_tamagotchi(machine_id: str, data: schemas.DataDiff,  db: Session = D
 def get_sprite(hardware_id: str, db: Session = Depends(get_db)):
     tamagotchi = crud.get_tamagotchi_sprite(db, hardware_id)
     return Response(content=tamagotchi, media_type="image/png")
+
+
+@app.get("/random/sprite",
+         responses={
+            200: {
+                "content": {"image/png": {}}
+            }
+        },
+        response_class=Response)
+def get_random_sprite():
+    tamagotchi = crud.get_random_tamagotchi()
+    return Response(content=tamagotchi, media_type="image/png")
+
+
+@app.get("/tamagotchis_sprite/{tamagotchi_id}",
+         responses={
+             200: {
+                 "content": {"image/png": {}}
+             }
+         },
+         response_class=Response)
+def get_tamagotchi_sprite(tamagotchi_id: int, db: Session = Depends(get_db)):
+    tamagotchi = crud.get_tamadachi_sprite_by_id(db, tamagotchi_id)
+    return Response(content=tamagotchi, media_type="image/png")
+
+
+@app.post("/update_stats/", response_model=schemas.Tamagotchi)
+def update_stats(stats: schemas.updateStats, db: Session = Depends(get_db)):
+    tamagotchi = crud.update_stats(db, stats)
+    if tamagotchi is None:
+        raise HTTPException(status_code=404, detail="Tamagotchi not found")
+    return tamagotchi
+

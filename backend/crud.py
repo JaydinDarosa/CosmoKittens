@@ -86,17 +86,49 @@ def get_tamagotchi_sprite(db: Session, machine_id: str):
         return None
     appearanceStringJson = tamagachi.appearance
     appearance = schemas.Appearance.parse_raw(appearanceStringJson)
-    base_texture = Image.open("assets/pp_" + str(appearance.primary_color) + "_" + str(appearance.body_type) + ".png").convert("RGBA")
-    secondary_texture = Image.open("assets/sp_" + str(appearance.secondary_color) + "_" + str(appearance.body_type) + ".png").convert("RGBA")
-    tamagotchi = Image.new("RGBA", base_texture.size)
-    tamagotchi.paste(base_texture, [0, 0], base_texture)
-    tamagotchi.paste(secondary_texture, [0, 0], secondary_texture)
+    tamagotchi = apperanceToImage(appearance)
+    membuf = BytesIO()
+    tamagotchi.save(membuf, format="PNG")
+    return membuf.getvalue()
+
+def get_random_tamagotchi():
+    appearance = schemas.getRandomAppearance()
+    tamagotchi = apperanceToImage(appearance)
     membuf = BytesIO()
     tamagotchi.save(membuf, format="PNG")
     return membuf.getvalue()
 
 
+def apperanceToImage(appearance: schemas.Appearance):
+    base_texture = Image.open("assets/pp_" + str(appearance.primary_color) + "_" + str(appearance.body_type) + ".png").convert("RGBA")
+    secondary_texture = Image.open("assets/sp_" + str(appearance.secondary_color) + "_" + str(appearance.body_type) + ".png").convert("RGBA")
+    tamagotchi = Image.new("RGBA", base_texture.size)
+    tamagotchi.paste(base_texture, [0, 0], base_texture)
+    tamagotchi.paste(secondary_texture, [0, 0], secondary_texture)
+    return tamagotchi
 
+def get_tamadachi_sprite_by_id(db: Session, tamagotchi_id: int):
+    tamagachi = db.query(models.Tamagotchi).filter(models.Tamagotchi.id == tamagotchi_id).first()
+    if tamagachi is None:
+        return None
+    appearanceStringJson = tamagachi.appearance
+    appearance = schemas.Appearance.parse_raw(appearanceStringJson)
+    tamagotchi = apperanceToImage(appearance)
+    membuf = BytesIO()
+    tamagotchi.save(membuf, format="PNG")
+    return membuf.getvalue()
+
+def update_stats(db: Session, stats: schemas.updateStats):
+    tamagotchi = db.query(models.Tamagotchi).filter(models.Tamagotchi.id == stats.tamagotchi_id).first()
+    if tamagotchi is None:
+        return None
+    tamagotchi.food += stats.food
+    tamagotchi.food = min(tamagotchi.food, 100)
+    tamagotchi.water += stats.water
+    tamagotchi.water = min(tamagotchi.water, 100)
+    db.commit()
+    db.refresh(tamagotchi)
+    return tamagotchi
 
 
 

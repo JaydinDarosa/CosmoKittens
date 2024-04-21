@@ -12,6 +12,15 @@ import Gift from 'astro-heroicons/outline/Gift.astro';
 <Layout title="Cosmic Kittens!">
 		<main class="flex-1 bg-gray-100 px-16">
 			<section class="container mx-auto py-12 md:py-24 lg:py-32">
+				<div class="w-full inline-flex flex-nowrap mb-8 fancy_background scale-x-[-1]">
+						<ul class="flex items-center justify-center md:justify-start [&_li]:mx-8 [&_img]:max-w-none animate-infinite-scroll [&>*>img]:drop-shadow-xl [&>*>img]:animate-bounce [&>*>img]:scale-x-[-1]" id="marquee_1">
+
+						</ul>
+						<ul class="flex items-center justify-center md:justify-start [&_li]:mx-8 [&_img]:max-w-none animate-infinite-scroll [&>*>img]:drop-shadow-xl [&>*>img]:animate-bounce [&>*>img]:scale-x-[-1]" aria-hidden="true" id="marquee_2">
+
+						</ul>
+				</div>
+
 				<div class="grid md:grid-cols-2 gap-8 items-center">
 					<div class="space-y-4">
 						<h1 class="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">Adopt Your Cosmic Kitten</h1>
@@ -119,13 +128,9 @@ import Gift from 'astro-heroicons/outline/Gift.astro';
 </style>
 <script>
 	var images = [
-		"mermaid_cat.png",
-		"mermaid_cat_2.jpg",
-		"normal_cat.jpg",
-		"scared_cat.jpg",
-		"striped_cat.png",
-		"another_cat.jpg"
+		"yard.png",
 	]
+	var delays = ["delay-0", "delay-75", "delay-100", "delay-150", "delay-200"]
 	// Get all cat_img elements
 	var catImages = document.querySelectorAll('.cat_img');
 	catImages.forEach((catImage: HTMLImageElement) => {
@@ -133,5 +138,42 @@ import Gift from 'astro-heroicons/outline/Gift.astro';
 		images = images.filter((image) => image !== catImage.src.split("/").pop());
 	});
 
+	for (let i = 0; i < 10; i++) {
+		fetch("/api/random/sprite")
+			.then((response) => {
+				if (response.ok) {
+					return response.blob();
+				}
+				throw new Error('Network response was not ok.');
+			})
+			.then((blob) => {
+				const url = URL.createObjectURL(blob);
+				const img = document.createElement('img');
+				img.classList.add("inline");
+				img.classList.add(delays[Math.floor(Math.random() * delays.length)]);
+				img.src = url;
+				const li1 = document.createElement('li');
+				li1.appendChild(img.cloneNode());
+				document.getElementById("marquee_1").appendChild(li1);
+				const li2 = document.createElement('li');
+				li2.appendChild(img.cloneNode());
+				document.getElementById("marquee_2").appendChild(li2);
+
+
+			})
+			.catch((error) => {
+				console.error('There has been a problem with your fetch operation:', error);
+			});
+	}
+	setTimeout(() => {
+		document.getElementById("cat_mover").classList.add("animate-cat_mover");
+	}, 1000);
+
 
 </script>
+<style>
+	.fancy_background {
+		background-color: #f3f4f6;
+		background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e4bfff' fill-opacity='0.4' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+	}
+</style>

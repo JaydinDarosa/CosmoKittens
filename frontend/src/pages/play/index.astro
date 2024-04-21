@@ -1,0 +1,167 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+---
+<Layout title="Your Cosmic Kitten">
+    <div class="flex flex-row items-center justify-center h-screen">
+        <div id="tamagotchi_list" class="w-1/2 h-full">
+            <div class="flex flex-row items-center justify-center h-1/5">
+                <h1 class="text-4xl">Your Cosmic Cats</h1>
+            </div>
+            <div></div>
+        </div>
+        <div id="stats" class="w-1/2">
+            <div class="w-1/5 flex flex-col h-full">
+                <div class="h-1/5 block align-middle">
+                    <h1>Health</h1>
+                    <h2 id="health_stat">100</h2>
+                </div>
+                <div class="h-1/5 block align-middle">
+                    <h1>Water</h1>
+                    <h2 id="water_stat">100</h2>
+                </div>
+                <div class="h-1/5 block align-middle">
+                    <h1>Food</h1>
+                    <h2 id="food_stat">100</h2>
+                </div>
+                <div class="h-1/5 block align-middle">
+                    <h1>Battery</h1>
+                    <h2 id="battery_stat">100</h2>
+                </div>
+                <div class="h-1/5 block align-middle">
+                    <h1>Steps</h1>
+                    <h2 id="steps_stat">100</h2>
+                </div>
+                <button id="eat" class="bg-gray-400 hover:bg-gray-500"
+                >You both ate a meal</button>
+                <button id="drink" class="bg-gray-400 hover:bg-gray-500 mt-3"
+                >You both drank some water</button>
+            </div>
+        </div>
+
+    </div>
+</Layout>
+<script>
+    interface Tamagotchi {
+        id: number;
+        name: string;
+        owner: number
+        appearance: string;
+        steps: number;
+        water: number;
+        food: number;
+        battery: number;
+        mood: number;
+        health: number;
+    }
+    await fetch('/api/self', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            window.location.href = '/login';
+        }
+        throw new Error('Network response was not ok.');
+    })
+    var tamagotchis: Tamagotchi[] = []
+    var focused_tamagotchi = tamagotchis[0];
+
+    await fetch('/api/self/tamagotchis', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Network response was not ok.');
+    }).then(data => {
+        tamagotchis = data;
+        console.log(tamagotchis);
+        setupSprites();
+    }).catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+
+
+
+    function setupSprites() {
+        for (let i = 0; i < tamagotchis.length; i++) {
+            fetch("/api/tamagotchis_sprite/ " + tamagotchis[i].id)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const img = document.createElement('img');
+                    img.onclick = () => {
+                        focused_tamagotchi = tamagotchis[i];
+                        setStats(focused_tamagotchi);
+                    }
+                    img.classList.add('inline');
+                    img.src = url;
+                    document.getElementById('tamagotchi_list').appendChild(img);
+
+                })
+                .catch((error) => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+    }
+
+    function setStats(Tamagotchi: Tamagotchi) {
+        document.getElementById('health_stat').innerText = Tamagotchi.health.toString();
+        document.getElementById('water_stat').innerText = Tamagotchi.water.toString();
+        document.getElementById('food_stat').innerText = Tamagotchi.food.toString();
+        document.getElementById('battery_stat').innerText = Tamagotchi.battery.toString();
+        document.getElementById('steps_stat').innerText = Tamagotchi.steps.toString();
+    }
+
+    function updateStats(water, food) {
+        // send a /api/update_stats/ with tamagotchi id and water and food
+        fetch('/api/update_stats/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tamagotchi_id: focused_tamagotchi.id,
+                water: water,
+                food: food
+            }),
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        }).then(data => {
+            console.log(data);
+            setStats(data);
+            tamagotchis[tamagotchis.indexOf(focused_tamagotchi)] = data;
+            focused_tamagotchi = data;
+        }).catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
+    }
+    document.getElementById('eat').onclick = () => {
+        updateStats(0, 30);
+    }
+    document.getElementById('drink').onclick = () => {
+        updateStats(5, 0);
+    }
+
+
+</script>
+
+
+<style>
+</style>
+
