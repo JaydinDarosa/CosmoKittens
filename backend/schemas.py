@@ -65,4 +65,9 @@ class CreatedTamagotchi(TamagotchiBase):
     id: int
 
 
+class updateStats(BaseModel):
+    tamagotchi_id: int
+    water: int
+    food: int
+
 
